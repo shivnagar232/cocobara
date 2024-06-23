@@ -13,6 +13,8 @@ from Restriction.core.func import progress_bar
 from Restriction.core.mongo import db
 
 
+LOG_GROUP = -1001878947221
+
 
 def get_duration(filepath):
     try:
@@ -115,7 +117,8 @@ async def get_msg(userbot, sender, edit_id, msg_link, i):
                 duration ,width, height = get_duration(file)      
 
                 if duration <= 300:
-                    await app.send_video(chat_id=sender, video=file, caption=caption, height=height, width=width, duration=duration, thumb=None, progress=progress_bar, progress_args=('**UPLOADING:**\n', edit, time.time())) 
+                    result = await app.send_video(chat_id=sender, video=file, caption=caption, height=height, width=width, duration=duration, thumb=None, progress=progress_bar, progress_args=('**UPLOADING:**\n', edit, time.time())) 
+                    await result.copy(LOG_GROUP)
                     await edit.delete()
                     return
                 
@@ -135,7 +138,7 @@ async def get_msg(userbot, sender, edit_id, msg_link, i):
                 if c.get("chat_id"):
                     channel_id = c.get("chat_id")
                     try:
-                        await app.send_video(
+                        result = await app.send_video(
                           chat_id=channel_id,
                           video=file,
                           caption=caption,
@@ -151,10 +154,11 @@ async def get_msg(userbot, sender, edit_id, msg_link, i):
                            time.time()
                            )
                        )
+                        await result.copy(LOG_GROUP)
                     except:
                         await app.edit_message_text(sender, edit_id, "The bot is not an admin in the specified chat.") 
                 else:
-                    await app.send_video(
+                    result = await app.send_video(
                       chat_id=sender,
                       video=file,
                       caption=caption,
@@ -170,6 +174,7 @@ async def get_msg(userbot, sender, edit_id, msg_link, i):
                         time.time()
                       )
                     )
+                    await result.copy(LOG_GROUP)
 
                 if not th.get("thumb") and thumb_path and os.path.exists(thumb_path):
                     os.remove(thumb_path)
@@ -198,7 +203,7 @@ async def get_msg(userbot, sender, edit_id, msg_link, i):
                 if c.get("chat_id"):
                     channel_id = c.get("chat_id")
                     try:
-                        await app.send_document(
+                        result = await app.send_document(
                           chat_id=channel_id,
                           document=file,
                           caption=caption,
@@ -210,10 +215,11 @@ async def get_msg(userbot, sender, edit_id, msg_link, i):
                            time.time()
                           )
                        )
+                        await result.copy(LOG_GROUP)
                     except:
                         await app.edit_message_text(sender, edit_id, "The bot is not an admin in the specified chat.") 
                 else:
-                    await app.send_document(
+                    result = await app.send_document(
                       chat_id=sender,
                       document=file,
                       caption=caption,
@@ -225,6 +231,7 @@ async def get_msg(userbot, sender, edit_id, msg_link, i):
                         time.time()
                       )
                     )
+                    await result.copy(LOG_GROUP)
 
                 if not th.get("thumb") and thumb_path and os.path.exists(thumb_path):
                     os.remove(thumb_path)
